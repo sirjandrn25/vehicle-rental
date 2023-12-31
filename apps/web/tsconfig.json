@@ -5,7 +5,21 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@actions/*": [
+        "./src/_actions/*"
+      ],
+    },
   },
   "include": [
     "next-env.d.ts",
@@ -14,5 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+ 
+  "exclude": ["node_modules","tailwind.config.js"]
 }
