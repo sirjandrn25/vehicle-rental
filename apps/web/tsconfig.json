@@ -7,18 +7,7 @@
       }
     ],
     "paths": {
-      "@lib/*": [
-        "./src/lib/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@actions/*": [
-        "./src/_actions/*"
-      ],
+      "@ui/*": ["./modules/ui/*"],
     },
   },
   "include": [
@@ -29,5 +18,5 @@
     ".next/types/**/*.ts"
   ],
  
-  "exclude": ["node_modules","tailwind.config.js"]
+  "exclude": ["node_modules"]
 }
