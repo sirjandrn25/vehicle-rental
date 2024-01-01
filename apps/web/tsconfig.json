@@ -8,6 +8,7 @@
     ],
     "paths": {
       "@ui/*": ["./modules/ui/*"],
+      "@shared/*": ["./modules/shared/*"]
     },
   },
   "include": [
