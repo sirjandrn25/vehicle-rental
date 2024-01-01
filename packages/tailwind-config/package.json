@@ -1,16 +1,15 @@
 {
-    "name": "tailwind-config",
-    "version": "0.1.0",
-    "main": "index.ts",
-    "license": "MIT",
-    "dependencies": {
-        "@tailwindcss/typography": "^0.5.9",
-        "autoprefixer": "^10.4.13",
-        "postcss": "^8.4.21",
-        "tailwindcss": "^3.3.3",
-        "tailwindcss-animate": "^1.0.7"
-    },
-    "devDependencies": {
-        "tailwindcss": "^3.3.3"
-    }
+  "name": "tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.ts",
+  "devDependencies": {
+    "@mertasan/tailwindcss-variables": "^2.7.0",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.6",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/mertasan__tailwindcss-variables": "^2.6.1",
+    "tailwindcss": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
 }
