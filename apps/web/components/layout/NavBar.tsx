@@ -12,6 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useIsClient } from "usehooks-ts";
+import { userContext } from "../../src/context/auth.provider";
 // import { Banner } from "./Banner";
 
 export function NavBar() {
@@ -19,6 +20,8 @@ export function NavBar() {
   // const { user, loaded: userLoaded } = useUser();
   // const locale = useLocale();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isLoggedIn } = userContext();
+
   const pathname = usePathname();
   const isClient = useIsClient();
 
@@ -109,7 +112,7 @@ export function NavBar() {
 
             {isClient && (
               <>
-                {false ? (
+                {isLoggedIn ? (
                   <Button
                     key="dashboard"
                     className="hidden md:block"

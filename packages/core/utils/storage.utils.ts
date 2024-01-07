@@ -19,7 +19,19 @@ export default class LocalStorageUtils {
   }
 }
 
-const auth_local_state_key = "auth_local_state";
+export const auth_local_state_key = "auth_local_state";
+export type UserType = {
+  id: string;
+  name: string;
+  email: string;
+  role: "USER" | "ADMIN";
+  email_verified: boolean;
+};
+export type UserSessionType = {
+  user: UserType;
+  access_token: string;
+  refresh_token: string;
+};
 export class AuthStorageUtils {
   static getAccessToken() {
     const data = LocalStorageUtils.getLocalState(auth_local_state_key);

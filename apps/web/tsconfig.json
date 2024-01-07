@@ -8,7 +8,8 @@
     ],
     "paths": {
       "@ui/*": ["./modules/ui/*"],
-      "@shared/*": ["./modules/shared/*"]
+      "@shared/*": ["./modules/shared/*"],
+      "@context/*": ["./src/context/*"],
     },
   },
   "include": [

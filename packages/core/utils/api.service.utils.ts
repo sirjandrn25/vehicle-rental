@@ -8,7 +8,7 @@ const getAccessToken = (type = "Bearer") => {
   return `${type} ${token}`;
 };
 const PRODUCTION_URL = "https://dv-mart-web.vercel.app";
-const DEVELOPMENT_URL = "http://localhost:3000";
+const DEVELOPMENT_URL = "http://localhost:8000";
 export const api_request_methods = ["get", "post", "put", "patch", "delete"];
 const base_url =
   process.env.NODE_ENV !== "production" ? DEVELOPMENT_URL : PRODUCTION_URL;
@@ -63,7 +63,7 @@ type apiPostOptionsServiceType = {
   isLoggedIn?: boolean;
   methodParams?: string;
 };
-export default class ApiService {
+export class ApiService {
   static async postRequest(
     end_point: string,
     options: apiPostOptionsServiceType
