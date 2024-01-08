@@ -166,7 +166,14 @@ const FormMessage = React.forwardRef<
   );
 });
 FormMessage.displayName = "FormMessage";
-
+export interface BaseInputFormProps {
+  name: string;
+  label: string;
+  control: any;
+  placeholder?: string;
+  required?: boolean;
+  itemClassName?: string;
+}
 export {
   Form,
   FormControl,

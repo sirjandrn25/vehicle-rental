@@ -19,7 +19,6 @@ export default class LocalStorageUtils {
   }
 }
 
-export const auth_local_state_key = "auth_local_state";
 export type UserType = {
   id: string;
   name: string;
@@ -27,6 +26,7 @@ export type UserType = {
   role: "USER" | "ADMIN";
   email_verified: boolean;
 };
+export const authSession = "auth_session";
 export type UserSessionType = {
   user: UserType;
   access_token: string;
@@ -34,23 +34,23 @@ export type UserSessionType = {
 };
 export class AuthStorageUtils {
   static getAccessToken() {
-    const data = LocalStorageUtils.getLocalState(auth_local_state_key);
+    const data = LocalStorageUtils.getLocalState(authSession);
     return data?.access_token;
   }
   static getRefreshToken() {
-    const data = LocalStorageUtils.getLocalState(auth_local_state_key);
+    const data = LocalStorageUtils.getLocalState(authSession);
     return data?.refresh_token;
   }
   static getUser() {
-    const data = LocalStorageUtils.getLocalState(auth_local_state_key);
+    const data = LocalStorageUtils.getLocalState(authSession);
     return data?.user;
   }
 
   static logout() {
-    localStorage.removeItem(auth_local_state_key);
+    localStorage.removeItem(authSession);
   }
 
   static setInfo(data: DictionaryType) {
-    LocalStorageUtils.setLocalState(auth_local_state_key, data);
+    LocalStorageUtils.setLocalState(authSession, data);
   }
 }

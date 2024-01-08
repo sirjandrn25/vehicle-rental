@@ -12,7 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useIsClient } from "usehooks-ts";
-import { userContext } from "../../src/context/auth.provider";
+import { useAuthContext } from "../../src/context/auth.provider";
 // import { Banner } from "./Banner";
 
 export function NavBar() {
@@ -20,7 +20,7 @@ export function NavBar() {
   // const { user, loaded: userLoaded } = useUser();
   // const locale = useLocale();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isLoggedIn } = userContext();
+  const { isLoggedIn } = useAuthContext();
 
   const pathname = usePathname();
   const isClient = useIsClient();

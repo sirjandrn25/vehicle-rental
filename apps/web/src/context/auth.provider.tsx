@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { ApiService, DictionaryType, UserType } from "core";
+import { ApiService, UserSessionType, UserType, authSession } from "core";
+import { redirect } from "next/dist/server/api-utils";
 
 import {
   ReactNode,
@@ -18,17 +19,33 @@ type AuthContextType = {
   user?: UserType;
   isLoggedIn: boolean;
   isLoading: boolean;
-  handleLogin?: ({ email, password }: LoginInfoType) => void;
+  handleLogin?: (data: UserSessionType) => void;
   handleLogout?: () => void;
 };
 export const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   isLoading: false,
 });
-const authSession = "auth_session";
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useLocalStorage<any>(authSession, {});
 
+  useQuery({
+    queryKey: ["refreshToken"],
+    queryFn: async () => {
+      const { success, response } = await ApiService.postRequest(
+        "auth/refresh-token",
+        {
+          data: {
+            token: session?.refresh_token,
+          },
+        }
+      );
+      if (success) handleLogin(response);
+    },
+    refetchInterval: 3 * 1000 * 60,
+    enabled: !!session?.refresh_token,
+  });
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -40,35 +57,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // AuthStorageUtils.getRefreshToken()
-  useQuery({
-    queryKey: ["refreshToken"],
-    queryFn: async () => {
-      const { success, response } = await ApiService.postRequest(
-        "auth/refresh",
-        {
-          data: {
-            token: session?.refresh_token,
-          },
-        }
-      );
-      if (success) handleLogin(response);
-    },
-    refetchInterval: 3 * 1000,
-    enabled: !!session?.refresh_token,
-  });
-  const handleLogin = useCallback(
-    async (
-      data: LoginInfoType,
-      callback?: (response?: DictionaryType) => void
-    ) => {
-      const { success, response } = await ApiService.postRequest("auth/login", {
-        data,
-      });
-      if (success) return setSession(response);
-      callback?.(response);
-    },
-    []
-  );
+
+  const handleLogin = useCallback((data: UserSessionType) => {
+    setSession(data);
+  }, []);
 
   const handleLogout = useCallback(() => {
     setSession(null);
