@@ -1,11 +1,13 @@
+import { cn } from "@ui/lib/utils";
 import React from "react";
 
 type SeparationProps = {
   title?: string;
+  className?: string;
 };
-const Separation = ({ title }: SeparationProps) => {
+const Separation = ({ title, className }: SeparationProps) => {
   return (
-    <div className="relative">
+    <div className={cn("relative", className)}>
       <div className="absolute inset-0 flex items-center">
         <span className="w-full border-t" />
       </div>

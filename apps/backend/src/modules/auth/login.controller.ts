@@ -4,6 +4,7 @@ import { asyncErrorHandler } from "../../controllers/error.handler.controller";
 import dbService from "../../utils/database.utils";
 import { HashingUtils } from "../../utils/hashing.utils";
 import JwtTokenUtils from "../../utils/jwt.token.utils";
+import CustomError from "../../utils/customError.utils";
 
 export const loginSchema = z.object({
   email: z
@@ -12,7 +13,7 @@ export const loginSchema = z.object({
     .min(1)
     .max(255)
     .transform((v) => v.toLowerCase()),
-  password: z.string().min(8).max(255),
+  password: z.string().min(6).max(255),
 });
 export const loginController = asyncErrorHandler(
   async (req: Request, res: Response) => {
@@ -23,18 +24,14 @@ export const loginController = asyncErrorHandler(
         email,
       },
     });
-    if (!user)
-      return res.status(403).send({
-        email: "this email does not exist!!",
-      });
+    if (!user) throw new CustomError("this user does not exist", 403);
+
     const isMatched = await HashingUtils.compare(
       password,
       user?.password as string
     );
-    if (!isMatched)
-      return res.status(403).send({
-        password: "password is doesn't match !!",
-      });
+    if (!isMatched) throw new CustomError("Credentials Doesn't matched", 403);
+
     const userSession = {
       id: user.id,
       name: user.name,

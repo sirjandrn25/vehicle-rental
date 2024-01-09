@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ApiService, UserSessionType, UserType, authSession } from "core";
-import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
 import {
   ReactNode,
@@ -11,10 +11,6 @@ import {
 } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
-type LoginInfoType = {
-  email: string;
-  password: string;
-};
 type AuthContextType = {
   user?: UserType;
   isLoggedIn: boolean;
@@ -29,6 +25,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useLocalStorage<any>(authSession, {});
+  const router = useRouter();
 
   useQuery({
     queryKey: ["refreshToken"],
@@ -42,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
       if (success) handleLogin(response);
+      else router.push("/auth/login");
     },
     refetchInterval: 3 * 1000 * 60,
     enabled: !!session?.refresh_token,

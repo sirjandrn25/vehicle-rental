@@ -7,25 +7,31 @@ import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
 import { ApiService } from "core";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { InputFormField } from "../../../../../src/components/FormElements/input.form.field";
+import { useRouter } from "next/navigation";
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(6),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 const LoginPage = () => {
+  const [error, setError] = useState<any>("");
   const { handleLogin } = useAuthContext();
+  const router = useRouter();
   const { mutate: onSubmit, isPending } = useMutation({
     onMutate: async (data: FormValues) => {
       const { success, response } = await ApiService.postRequest("auth/login", {
         data,
       });
-      if (success) handleLogin?.(response as any);
+      if (success) {
+        handleLogin?.(response as any);
+        router.push("/");
+      } else setError(response?.message);
     },
   });
 
@@ -40,6 +46,7 @@ const LoginPage = () => {
           })}
           className="flex flex-col gap-4"
         >
+          {error && <div className="text-sm text-error">{error}</div>}
           <div className="grid gap-2">
             <InputFormField
               control={form?.control}
