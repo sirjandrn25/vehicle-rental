@@ -10,7 +10,7 @@ import {
 } from "@ui/components/Form";
 import { Input, PasswordInput } from "@ui/components/Input";
 import { Textarea } from "@ui/components/textarea";
-import { cn } from "../../modules/ui/lib/utils";
+import { cn } from "../../../modules/ui/lib/utils";
 
 interface InputFormFieldProps extends BaseInputFormProps {
   type?: "text" | "textarea" | "number" | "password";

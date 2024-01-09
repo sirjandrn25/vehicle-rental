@@ -10,6 +10,7 @@
       "@ui/*": ["./modules/ui/*"],
       "@shared/*": ["./modules/shared/*"],
       "@context/*": ["./src/context/*"],
+      "@components/*": ["./src/components/*"],
     },
   },
   "include": [

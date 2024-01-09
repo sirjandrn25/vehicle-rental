@@ -12,7 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useIsClient } from "usehooks-ts";
-import { useAuthContext } from "../../src/context/auth.provider";
+import { useAuthContext } from "../../context/auth.provider";
 // import { Banner } from "./Banner";
 
 export function NavBar() {
