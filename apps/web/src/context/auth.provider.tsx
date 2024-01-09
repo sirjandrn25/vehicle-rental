@@ -1,3 +1,4 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
 import { ApiService, UserSessionType, UserType, authSession } from "core";
 import { useRouter } from "next/navigation";
@@ -8,6 +9,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -25,6 +27,8 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useLocalStorage<any>(authSession, {});
+  const [accessToken, setAccessToken] = useState(session?.access_token);
+  const [refreshToken, setRefreshToken] = useState(session?.refresh_token);
   const router = useRouter();
 
   useQuery({
@@ -42,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       else router.push("/auth/login");
     },
     refetchInterval: 3 * 1000 * 60,
-    enabled: !!session?.refresh_token,
+    enabled: !!refreshToken,
   });
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
@@ -51,17 +55,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (success) return response;
       return {};
     },
-    enabled: !!session?.access_token,
+    enabled: !!accessToken,
   });
 
   // AuthStorageUtils.getRefreshToken()
 
   const handleLogin = useCallback((data: UserSessionType) => {
     setSession(data);
+    setAccessToken(data.access_token);
+    setRefreshToken(data.refresh_token);
   }, []);
 
   const handleLogout = useCallback(() => {
     setSession(null);
+    setAccessToken(null);
+    setRefreshToken(null);
   }, []);
 
   const value = useMemo(() => {
@@ -69,10 +77,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       handleLogin,
       handleLogout,
       user,
-      isLoggedIn: !!session?.access_token,
+      isLoggedIn: !!accessToken,
       isLoading,
     };
-  }, [handleLogin, handleLogout]);
+  }, [handleLogin, user, isLoading, accessToken, handleLogout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

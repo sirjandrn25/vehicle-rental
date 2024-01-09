@@ -99,8 +99,8 @@ export function NavBar() {
                   ))}
 
                   <Link
-                    key={false ? "dashboard" : "login"}
-                    href={false ? `/app` : "/auth/login"}
+                    key={isLoggedIn ? "dashboard" : "login"}
+                    href={isLoggedIn ? `/dashboard` : "/auth/login"}
                     className="block px-3 py-2 text-lg"
                     // prefetch={!user}
                   >
@@ -119,7 +119,7 @@ export function NavBar() {
                     asChild
                     variant="ghost"
                   >
-                    <Link href="/app">{"Dashboard"}</Link>
+                    <Link href="/dashboard">{"Dashboard"}</Link>
                   </Button>
                 ) : (
                   <Button
