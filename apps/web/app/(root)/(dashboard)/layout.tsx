@@ -1,9 +1,11 @@
 "use client";
 import { DashboardNavbar } from "@components/layout/dashboard.navbar";
-import RestrictedPage from "@components/layout/restricted.page.component";
-import { useAuthContext } from "@context/auth.provider";
-import React, { ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { ReactNode } from "react";
 
+const AuthProtected = dynamic(
+  () => import("@components/layout/auth.protected")
+);
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
     <AuthProtected>
@@ -13,15 +15,6 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       </div>
     </AuthProtected>
   );
-};
-
-const AuthProtected = ({ children }: { children: ReactNode }) => {
-  const { isLoading, isLoggedIn } = useAuthContext();
-  if (!isLoggedIn)
-    return (
-      <RestrictedPage message="Please login first your own credentials..." />
-    );
-  return <>{children}</>;
 };
 
 export default DashboardLayout;

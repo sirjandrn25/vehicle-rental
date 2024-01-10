@@ -17,8 +17,8 @@ const errorHandler = (
 export const asyncErrorHandler = (func: Function) => {
   return (req: Request, res: Response, next: Function) =>
     func(req, res, next).catch((error: any) => {
-      if (!error?.code)
-        return res?.status(500).send({ message: "Internal Server Error" });
+      // if (!error?.code)
+      //   return res?.status(500).send({ message: "Internal Server Error" });
       if (error?.code === "P2002") {
         const target = error?.meta?.target[0];
 

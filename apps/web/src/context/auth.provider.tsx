@@ -43,11 +43,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       if (success) handleLogin(response);
       else handleLogout();
+      return {};
     },
     refetchInterval: 3 * 1000 * 60,
     enabled: !!localSession?.refresh_token,
   });
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isFetching: isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const { success, response } = await ApiService.getRequest("auth", true);
@@ -78,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isLoggedIn: !!localSession?.access_token,
       isLoading,
     };
-  }, [handleLogin, user, isLoading, handleLogout]);
+  }, [handleLogin, user, localSession?.access_token, isLoading, handleLogout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
