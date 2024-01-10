@@ -27,8 +27,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useLocalStorage<any>(authSession, {});
-  const [accessToken, setAccessToken] = useState(session?.access_token);
-  const [refreshToken, setRefreshToken] = useState(session?.refresh_token);
+  const [localSession, setLocalSession] = useState(session);
   const router = useRouter();
 
   useQuery({
@@ -43,10 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
       if (success) handleLogin(response);
-      else router.push("/auth/login");
+      else handleLogout();
     },
     refetchInterval: 3 * 1000 * 60,
-    enabled: !!refreshToken,
+    enabled: !!localSession?.refresh_token,
   });
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
@@ -55,21 +54,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (success) return response;
       return {};
     },
-    enabled: !!accessToken,
+    enabled: !!localSession?.access_token,
   });
 
   // AuthStorageUtils.getRefreshToken()
 
   const handleLogin = useCallback((data: UserSessionType) => {
     setSession(data);
-    setAccessToken(data.access_token);
-    setRefreshToken(data.refresh_token);
+    setLocalSession(data);
   }, []);
 
   const handleLogout = useCallback(() => {
     setSession(null);
-    setAccessToken(null);
-    setRefreshToken(null);
+    setLocalSession(null);
+    router.push("/auth/login");
   }, []);
 
   const value = useMemo(() => {
@@ -77,10 +75,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       handleLogin,
       handleLogout,
       user,
-      isLoggedIn: !!accessToken,
+      isLoggedIn: !!localSession?.access_token,
       isLoading,
     };
-  }, [handleLogin, user, isLoading, accessToken, handleLogout]);
+  }, [handleLogin, user, isLoading, handleLogout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
