@@ -33,17 +33,17 @@ export function DashboardNavbar() {
   const menuItems = [
     {
       label: "Dashboard",
-      href: `/dashboard`,
+      href: `/app/dashboard`,
       icon: Icon.grid,
     },
     {
-      label: "Ai Demo",
-      href: `/dashboard/ai-demo`,
+      label: "Files",
+      href: `/app/files`,
       icon: Icon.magic,
     },
     {
       label: "Settings",
-      href: `/dashboard/settings`,
+      href: `/app/settings`,
       icon: Icon.settings,
     },
   ];

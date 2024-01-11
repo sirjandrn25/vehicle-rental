@@ -16,6 +16,7 @@ import {
   Dot,
   Eye,
   EyeOff,
+  Folder,
   Globe,
   Grid,
   HardDrive,
@@ -46,6 +47,7 @@ import {
   Users,
   Wand2,
   X,
+  File,
 } from "lucide-react";
 
 interface IconProps {
@@ -100,6 +102,8 @@ export const Icon = {
   team: Users,
   pause: Pause,
   magic: Wand2,
+  folder: Folder,
+  file: File,
 
   // social icons
   google: ({ ...props }: IconProps) => (

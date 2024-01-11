@@ -1,6 +1,5 @@
 "use client";
 import { InputFormField } from "@components/FormElements/input.form.field";
-import { useAuthContext } from "@context/auth.provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/components/Button";
@@ -8,9 +7,9 @@ import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
 import { ApiService } from "core";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 const formSchema = z.object({
   email: z.string().email(),

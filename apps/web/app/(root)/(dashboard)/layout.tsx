@@ -9,9 +9,9 @@ const AuthProtected = dynamic(
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
     <AuthProtected>
-      <div className="min-h-screen  ">
+      <div className="min-h-screen bg-muted  ">
         <DashboardNavbar />
-        <main className="bg-muted">{children}</main>
+        <main className="flex-1 max-w-6xl py-8 container">{children}</main>
       </div>
     </AuthProtected>
   );

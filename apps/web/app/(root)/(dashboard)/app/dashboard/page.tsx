@@ -8,7 +8,7 @@ import React from "react";
 const DashboardPage = () => {
   const { user } = useAuthContext();
   return (
-    <div className="container max-w-6xl py-8">
+    <div className=" ">
       <PageHeader
         title={`Dashboard Welcome ${user?.name}`}
         subtitle={`Dashboard Details`}

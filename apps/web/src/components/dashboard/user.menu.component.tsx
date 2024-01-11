@@ -92,7 +92,7 @@ export function UserMenu() {
           </DropdownMenuPortal>
         </DropdownMenuSub>
 
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
 
         <DropdownMenuSeparator />
 
