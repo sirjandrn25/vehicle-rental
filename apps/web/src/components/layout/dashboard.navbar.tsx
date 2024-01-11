@@ -16,8 +16,6 @@ export function DashboardNavbar() {
   // const t = useTranslations();
   // const { user, loaded: userLoaded } = useUser();
   // const locale = useLocale();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isLoggedIn } = useAuthContext();
 
   const pathname = usePathname();
 
@@ -27,9 +25,7 @@ export function DashboardNavbar() {
     },
     [pathname]
   );
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+
   const menuItems = [
     {
       label: "Dashboard",
