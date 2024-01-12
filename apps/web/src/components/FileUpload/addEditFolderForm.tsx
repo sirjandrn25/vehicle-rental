@@ -20,7 +20,7 @@ const AddEditFolderForm = ({ children }: { children: any }) => {
   const { mutate: onSubmit, isPending } = useMutation({
     onMutate: async (data: FormValues) => {
       const { success, response } = await ApiService.postRequest(
-        "/create-folder",
+        "/create-fo`lder",
         {
           data,
         }

@@ -30,6 +30,7 @@ model User {
   memberships         TeamMembership[]
   verification_tokens UserVerificationToken[]
   one_time_passwords  UserOneTimePassword[]
+  folders             Folder[]
 }
 
 // model UserSession {
@@ -137,4 +138,15 @@ model Subscription {
   plan_id           String
   variant_id        String
   next_payment_date DateTime?
+}
+
+model Folder {
+  id         String    @id @default(cuid())
+  name       String
+  path       String // example. api/folder/tsx
+  user_id    String
+  user       User      @relation(fields: [user_id], references: [id])
+  created_at DateTime? @default(now())
+
+  @@unique([user_id, path])
 }
