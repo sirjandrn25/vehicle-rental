@@ -41,18 +41,22 @@ export default class FolderUtils {
     };
   }
   static async readByPath({ folderName, user }: ReadFolderProps) {
-    const prefix = `${getFolderPathByUser(user)}${makeIdentifier(
-      folderName ?? ""
-    )}`;
+    const basePath = getFolderPathByUser(user);
+    const prefix = `${basePath}/${makeIdentifier(folderName ?? "")}`;
     const params = {
       Bucket: S3_BUCKET_NAME,
       Prefix: prefix,
     };
 
     const response: any = await s3Client.send(new ListObjectsV2Command(params));
-
+    const contents = response.Contents;
+    return contents
+      ?.map((content: any) => {
+        content.Key = content?.Key?.replace(prefix, "");
+        return content;
+      })
+      .filter((content: any) => !!content?.Key);
     // Extract common prefixes (folders) from the response
-    return response.Contents;
   }
 
   static async deleteByPath({ folderName, user }: DeleteFolderProps) {

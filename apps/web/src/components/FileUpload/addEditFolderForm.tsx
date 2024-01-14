@@ -7,7 +7,7 @@ import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
 import ModalDialog from "@ui/components/modal.dialog";
 import { ApiService } from "core";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -15,23 +15,35 @@ const formSchema = z.object({
   name: z.string().min(3).max(50),
 });
 type FormValues = z.infer<typeof formSchema>;
-const AddEditFolderForm = ({ children }: { children: any }) => {
+const AddEditFolderForm = ({
+  children,
+  callback,
+}: {
+  children: any;
+  callback: any;
+}) => {
   const [error, setError] = useState<any>("");
+  const modalRef = useRef<any>();
   const { mutate: onSubmit, isPending } = useMutation({
     onMutate: async (data: FormValues) => {
-      const { success, response } = await ApiService.postRequest(
-        "/create-fo`lder",
-        {
-          data,
-        }
-      );
+      const { success } = await ApiService.postRequest("/folders", {
+        data,
+      });
+      if (success) {
+        modalRef.current.handleClose();
+        callback?.();
+      }
     },
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
   return (
-    <ModalDialog displayLabel={children} title={"Create New Folder"}>
+    <ModalDialog
+      ref={modalRef}
+      displayLabel={children}
+      title={"Create New Folder"}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(async (data) => {

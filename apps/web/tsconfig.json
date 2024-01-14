@@ -11,6 +11,7 @@
       "@shared/*": ["./modules/shared/*"],
       "@context/*": ["./src/context/*"],
       "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
     },
   },
   "include": [

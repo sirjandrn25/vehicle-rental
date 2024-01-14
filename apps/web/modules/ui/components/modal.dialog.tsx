@@ -1,5 +1,10 @@
 "use client";
-import React, { ReactNode, useState } from "react";
+import React, {
+  ReactNode,
+  forwardRef,
+  useImperativeHandle,
+  useState,
+} from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,26 +20,30 @@ interface ModalDialogInterface {
   children: ReactNode;
   displayLabel?: string | ReactNode;
 }
-const ModalDialog = ({
-  title,
-  description,
-  children,
-  displayLabel,
-}: ModalDialogInterface) => {
-  const [open, setOpen] = useState(false);
+const ModalDialog = forwardRef(
+  (
+    { title, description, children, displayLabel }: ModalDialogInterface,
+    ref: any
+  ) => {
+    const [open, setOpen] = useState(false);
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{displayLabel}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
-        {children}
-      </DialogContent>
-    </Dialog>
-  );
-};
+    useImperativeHandle(ref, () => ({ handleClose: () => setOpen(false) }), []);
+
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>{displayLabel}</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            {description && (
+              <DialogDescription>{description}</DialogDescription>
+            )}
+          </DialogHeader>
+          {children}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);
 
 export default ModalDialog;

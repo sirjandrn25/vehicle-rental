@@ -76,7 +76,7 @@ export class ApiService {
       detail_id: methodParams,
     });
   }
-  static async getRequest(end_point: string, isLoggedIn: boolean = false) {
+  static async getRequest(end_point: string, isLoggedIn: boolean = true) {
     return await apiRequestHandle(end_point, "get", {
       isLoggedIn,
     });
