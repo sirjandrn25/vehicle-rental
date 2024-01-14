@@ -2,18 +2,15 @@ import {
   DeleteObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
-  S3Client,
 } from "@aws-sdk/client-s3";
 import { DictionaryType } from "core";
+import {
+  S3_BUCKET_NAME,
+  getFolderPathByUser,
+  makeIdentifier,
+  s3Client,
+} from "../../config/s3-storage.config";
 
-export const s3Client = new S3Client({
-  region: process.env.S3_REGION as string,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY as string,
-    secretAccessKey: process.env.S3_SECRETE_KEY as string,
-  },
-});
-const BUCKET_NAME = "my-drive-st-bucket";
 type CreateFolderProps = {
   user: DictionaryType;
   folderName?: string;
@@ -30,7 +27,7 @@ export default class FolderUtils {
     }`;
     const path = `${basePath}/${identifier ? identifier + "/" : ""}`;
     const params = {
-      Bucket: BUCKET_NAME,
+      Bucket: S3_BUCKET_NAME,
       Key: path,
       Body: "",
       metadata: {
@@ -48,7 +45,7 @@ export default class FolderUtils {
       folderName ?? ""
     )}`;
     const params = {
-      Bucket: BUCKET_NAME,
+      Bucket: S3_BUCKET_NAME,
       Prefix: prefix,
     };
 
@@ -65,7 +62,7 @@ export default class FolderUtils {
     const deletePromises = data.map((obj: any) =>
       s3Client.send(
         new DeleteObjectCommand({
-          Bucket: BUCKET_NAME,
+          Bucket: S3_BUCKET_NAME,
           Key: obj.Key,
         })
       )
@@ -75,9 +72,3 @@ export default class FolderUtils {
     await Promise.all(deletePromises);
   }
 }
-const makeIdentifier = (name: string) => {
-  return name.toLowerCase().replace(" ", "-");
-};
-const getFolderPathByUser = (user: DictionaryType) => {
-  return `${makeIdentifier(user.name)}-${user.id}`;
-};

@@ -9,7 +9,6 @@ export const createFolder = asyncErrorHandler(
     const { name, current_path = "" } = req.body;
 
     const user = req.user;
-    console.log("user", user);
     try {
       const result = await FolderUtils.create({
         folderName: name,
