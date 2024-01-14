@@ -5,6 +5,7 @@ import { asyncErrorHandler } from "../../controllers/error.handler.controller";
 import CustomError from "../../utils/customError.utils";
 import dbService from "../../utils/database.utils";
 import { HashingUtils } from "../../utils/hashing.utils";
+import FolderUtils from "../folder/folder.utils";
 
 export const registerSchema = z.object({
   email: z
@@ -32,6 +33,9 @@ export const registerController = asyncErrorHandler(
         password: hashed_password,
       },
     });
+    FolderUtils.create({ user: newUser })
+      .then((json) => console.log("make folder", json))
+      .catch((error) => console.log(error));
 
     res.status(201).json(ObjectUtils.removeNode(newUser as any, "password"));
   }
