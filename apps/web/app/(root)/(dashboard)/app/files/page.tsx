@@ -4,15 +4,12 @@ import { useFileUpload } from "@hooks/useFileUpload.hook";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@ui/components/Button";
 import { Icon } from "@ui/components/Icon";
-import { FileDialog } from "@ui/file-dialog";
+import { FileDialog } from "@ui/components/file-dialog";
 import { FileWithPreview } from "@ui/types";
 import { ApiService } from "core";
 import React, { useMemo } from "react";
 
 const FilePage = () => {
-  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null);
-  const { isUploading, startToUpload } = useFileUpload();
-
   const { data, refetch } = useQuery({
     queryKey: ["folders"],
     queryFn: async () => {
@@ -30,19 +27,35 @@ const FilePage = () => {
             refetch();
           }}
         />
-        <FileDialog
-          files={files}
-          name="images"
-          maxFiles={3}
-          setFiles={setFiles}
-          setValue={() => {}}
-          maxSize={1024 * 1024 * 4}
-        />
+        <UploadFiles />
       </div>
       <div className=" grid grid-cols-4 gap-4 items-center w-full ">
         {data?.map((el: any) => <FolderItem folder={el} />)}
       </div>
     </div>
+  );
+};
+
+const UploadFiles = () => {
+  const [files, setFiles] = React.useState<FileWithPreview[] | null>(null);
+  const { isUploading, startToUpload } = useFileUpload({
+    onSuccess: (response) => {
+      setFiles(files);
+    },
+  });
+  return (
+    <FileDialog
+      files={files}
+      name="images"
+      maxFiles={3}
+      setFiles={setFiles}
+      setValue={() => {}}
+      isUploading={isUploading}
+      maxSize={1024 * 1024 * 4}
+      onSave={() => {
+        startToUpload(files);
+      }}
+    />
   );
 };
 

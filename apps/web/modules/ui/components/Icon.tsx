@@ -1,3 +1,4 @@
+import { Cross2Icon } from "@radix-ui/react-icons";
 import {
   AlertCircle,
   AlertTriangle,
@@ -104,6 +105,7 @@ export const Icon = {
   magic: Wand2,
   folder: Folder,
   file: File,
+  cross: Cross2Icon,
 
   // social icons
   google: ({ ...props }: IconProps) => (

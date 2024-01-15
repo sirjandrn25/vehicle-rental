@@ -25,10 +25,11 @@ import {
   UploadIcon,
 } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { Button } from "./components/Button";
-import { Dialog, DialogContent, DialogTrigger } from "./components/Dialog";
-import { cn, formatBytes } from "./lib/utils";
-import { FileWithPreview } from "./types";
+import { cn, formatBytes } from "../lib/utils";
+import { FileWithPreview } from "../types";
+import { Button } from "./Button";
+import { Dialog, DialogContent, DialogTrigger } from "./Dialog";
+import { Icon } from "./Icon";
 
 // FIXME Your proposed upload exceeds the maximum allowed size, this should trigger toast.error too
 
@@ -45,6 +46,7 @@ interface FileDialogProps<
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[] | null>>;
   isUploading?: boolean;
   disabled?: boolean;
+  onSave?: () => void;
 }
 
 export function FileDialog<TFieldValues extends FieldValues>({
@@ -60,6 +62,7 @@ export function FileDialog<TFieldValues extends FieldValues>({
   isUploading = false,
   disabled = false,
   className,
+  onSave,
   ...props
 }: FileDialogProps<TFieldValues>) {
   const onDrop = React.useCallback(
@@ -182,17 +185,35 @@ export function FileDialog<TFieldValues extends FieldValues>({
           </div>
         ) : null}
         {files?.length ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2.5 w-full"
-            onClick={() => setFiles(null)}
-          >
-            <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
-            Remove All
-            <span className="sr-only">Remove all</span>
-          </Button>
+          <div className="w-full flex gap-4 justify-between mt-2.5">
+            {" "}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className=" flex-1"
+              disabled={isUploading}
+              onClick={() => setFiles(null)}
+            >
+              <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+              Remove All
+              <span className="sr-only">Remove all</span>
+            </Button>
+            {onSave && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className=" flex-1"
+                disabled={isUploading}
+                onClick={() => onSave()}
+              >
+                {isUploading && <Icon.spinner />}
+                Save Files
+                <span className="sr-only">Remove all</span>
+              </Button>
+            )}
+          </div>
         ) : null}
       </DialogContent>
     </Dialog>
@@ -261,6 +282,7 @@ function FileCard({ i, file, files, setFiles }: FileCardProps) {
           height={40}
           loading="lazy"
         />
+
         <div className="flex flex-col">
           <p className="line-clamp-1 text-sm font-medium text-muted-foreground">
             {file.name.slice(0, 45)}
