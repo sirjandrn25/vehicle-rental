@@ -17,6 +17,7 @@ type CreateFolderProps = {
   currentPath?: string;
 };
 
+//s3 folder utils
 type DeleteFolderProps = Omit<CreateFolderProps, "currentPath">;
 type ReadFolderProps = Omit<CreateFolderProps, "currentPath">;
 export default class FolderUtils {
