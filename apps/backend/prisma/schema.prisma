@@ -141,12 +141,29 @@ model Subscription {
 }
 
 model Folder {
-  id         String    @id @default(cuid())
-  name       String
-  path       String // example. api/folder/tsx
-  user_id    String
-  user       User      @relation(fields: [user_id], references: [id])
+  id   String @id @default(cuid())
+  name String
+  path String @unique // example. api/folder/tsx 
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  parent_id String?
+  parent    Folder?  @relation("childrens", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  childrens Folder[] @relation("childrens")
+
   created_at DateTime? @default(now())
+  files      File[]
 
   @@unique([user_id, path])
+}
+
+model File {
+  id  String @id @default(cuid())
+  url String
+
+  folder_id String
+  folder    Folder @relation(fields: [folder_id], references: [id])
+
+  created_at DateTime? @default(now())
 }

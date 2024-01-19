@@ -22,9 +22,7 @@ type ReadFolderProps = Omit<CreateFolderProps, "currentPath">;
 export default class FolderUtils {
   static async create({ folderName, currentPath, user }: CreateFolderProps) {
     const identifier = folderName?.replace(" ", "-");
-    const basePath = `${getFolderPathByUser(user)}${
-      currentPath ? "/" + currentPath : ""
-    }`;
+    const basePath = currentPath ?? `${getFolderPathByUser(user)}/`;
     const path = `${basePath}/${identifier ? identifier + "/" : ""}`;
     const params = {
       Bucket: S3_BUCKET_NAME,

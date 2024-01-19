@@ -3,14 +3,18 @@ import axios from "axios";
 import { AuthStorageUtils } from "./storage.utils";
 import { DictionaryType } from "../types/common.types";
 
-const getAccessToken = (type = "Bearer") => {
+export const getAccessToken = (type = "Bearer") => {
   const token = AuthStorageUtils.getAccessToken();
   return `${type} ${token}`;
+};
+
+export const getAuthorizationHeader = () => {
+  return { Authorization: getAccessToken() };
 };
 const PRODUCTION_URL = "https://dv-mart-web.vercel.app";
 const DEVELOPMENT_URL = "http://localhost:8000";
 export const api_request_methods = ["get", "post", "put", "patch", "delete"];
-const base_url =
+export const serverBaseUrl =
   process.env.NODE_ENV !== "production" ? DEVELOPMENT_URL : PRODUCTION_URL;
 
 const apiRequestHandle = async (
@@ -23,7 +27,7 @@ const apiRequestHandle = async (
   }
 ) => {
   const { detail_id, data = {}, isLoggedIn = true } = options || {};
-  let full_url = `${base_url}/api/${end_point}`;
+  let full_url = `${serverBaseUrl}/api/${end_point}`;
 
   const params: DictionaryType = {};
 
@@ -32,7 +36,7 @@ const apiRequestHandle = async (
   }
 
   if (isLoggedIn) {
-    params["headers"] = { Authorization: getAccessToken() };
+    params["headers"] = getAuthorizationHeader();
   }
   if (!["get", "delete"].includes(method as any)) {
     params["data"] = data;

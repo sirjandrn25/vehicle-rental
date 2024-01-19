@@ -1,6 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { DictionaryType } from "core";
-
+console.log("process.env.S3_REGION", process.env.S3_REGION);
 export const s3Client = new S3Client({
   region: process.env.S3_REGION as string,
   credentials: {
