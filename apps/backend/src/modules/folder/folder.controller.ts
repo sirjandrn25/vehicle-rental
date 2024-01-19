@@ -8,7 +8,6 @@ export const bucketName = process.env.S3_BUCKET_NAME as string;
 export const createFolder = asyncErrorHandler(
   async (req: any, res: Response) => {
     const { name, parent_id = "" } = req.body;
-    let parentPath = "";
     const user = req.user;
     try {
       if (parent_id) {
@@ -19,18 +18,12 @@ export const createFolder = asyncErrorHandler(
         });
         if (!parentFolder)
           return res.status(404).json("parent path not found !!");
-        parentPath = parentFolder.path;
       }
-      const { path } = await FolderUtils.create({
-        folderName: name,
-        user,
-        currentPath: parentPath,
-      });
+
       const folder = await dbService.folder.create({
         data: {
           parent_id,
           name,
-          path,
           user_id: user?.id,
         },
       });
@@ -43,16 +36,41 @@ export const createFolder = asyncErrorHandler(
   }
 );
 export const readFolder = asyncErrorHandler(async (req: any, res: Response) => {
-  const { folderName = "" } = req.params;
+  const { id = "" } = req.params;
   const user = req.user;
   try {
-    const response = await FolderUtils.readByPath({ user, folderName });
-    return res.send(response);
+    const folder = await dbService.folder.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        childrens: true,
+        files: true,
+      },
+    });
+    if (!folder) return res.status(404).send("Not Found");
+    if (folder.user_id !== user?.id)
+      return res
+        .status(403)
+        .send("You don't have permission to access this folder");
+    return res.send();
   } catch (error) {
     console.log("error", error);
     return res.status(500).send(error);
   }
 });
+
+export const readFolders = asyncErrorHandler(
+  async (req: any, res: Response) => {
+    const user = req.user;
+    const folders = await dbService.folder.findMany({
+      where: {
+        user_id: user?.id,
+      },
+    });
+    return res.status(200).send(folders);
+  }
+);
 
 export const deleteFolder = asyncErrorHandler(
   async (req: any, res: Response) => {

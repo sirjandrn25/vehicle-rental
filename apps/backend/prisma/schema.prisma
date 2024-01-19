@@ -143,7 +143,6 @@ model Subscription {
 model Folder {
   id   String @id @default(cuid())
   name String
-  path String @unique // example. api/folder/tsx 
 
   user_id String
   user    User   @relation(fields: [user_id], references: [id])
@@ -155,7 +154,7 @@ model Folder {
   created_at DateTime? @default(now())
   files      File[]
 
-  @@unique([user_id, path])
+  @@unique([user_id, name, parent_id])
 }
 
 model File {
