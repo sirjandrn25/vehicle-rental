@@ -1,15 +1,25 @@
-import * as z from "zod"
-import { CompleteFolder, RelatedFolderModel } from "./index"
+import * as z from "zod";
+import {
+  CompleteUser,
+  RelatedUserModel,
+  CompleteFolder,
+  RelatedFolderModel,
+} from "./index";
 
 export const FileModel = z.object({
   id: z.string(),
   url: z.string(),
-  folder_id: z.string(),
+  name: z.string(),
+  user_id: z.string(),
+  folder_id: z.string().nullish(),
   created_at: z.date().nullish(),
-})
+});
+
+export const FileModelRename = FileModel.pick({ name: true });
 
 export interface CompleteFile extends z.infer<typeof FileModel> {
-  folder: CompleteFolder
+  user: CompleteUser;
+  folder?: CompleteFolder | null;
 }
 
 /**
@@ -17,6 +27,9 @@ export interface CompleteFile extends z.infer<typeof FileModel> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedFileModel: z.ZodSchema<CompleteFile> = z.lazy(() => FileModel.extend({
-  folder: RelatedFolderModel,
-}))
+export const RelatedFileModel: z.ZodSchema<CompleteFile> = z.lazy(() =>
+  FileModel.extend({
+    user: RelatedUserModel,
+    folder: RelatedFolderModel.nullish(),
+  })
+);

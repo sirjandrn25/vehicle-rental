@@ -31,6 +31,7 @@ model User {
   verification_tokens UserVerificationToken[]
   one_time_passwords  UserOneTimePassword[]
   folders             Folder[]
+  files               File[]
 }
 
 // model UserSession {
@@ -148,7 +149,7 @@ model Folder {
   user    User   @relation(fields: [user_id], references: [id])
 
   parent_id String?
-  parent    Folder?  @relation("childrens", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parent    Folder?  @relation("childrens", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   childrens Folder[] @relation("childrens")
 
   created_at DateTime? @default(now())
@@ -158,11 +159,15 @@ model Folder {
 }
 
 model File {
-  id  String @id @default(cuid())
-  url String
+  id   String @id @default(cuid())
+  url  String
+  name String
 
-  folder_id String
-  folder    Folder @relation(fields: [folder_id], references: [id])
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  folder_id String?
+  folder    Folder? @relation(fields: [folder_id], references: [id])
 
   created_at DateTime? @default(now())
 }

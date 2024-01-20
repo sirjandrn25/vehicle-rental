@@ -33,9 +33,6 @@ export const registerController = asyncErrorHandler(
         password: hashed_password,
       },
     });
-    FolderUtils.create({ user: newUser })
-      .then((json) => console.log("make folder", json))
-      .catch((error) => console.log(error));
 
     res.status(201).json(ObjectUtils.removeNode(newUser as any, "password"));
   }

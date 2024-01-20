@@ -7,7 +7,7 @@ import { Icon } from "@ui/components/Icon";
 import { FileDialog } from "@ui/components/file-dialog";
 import { FileWithPreview } from "@ui/types";
 import { ApiService } from "core";
-import React, { useMemo } from "react";
+import React from "react";
 
 const FilePage = () => {
   const { data, refetch } = useQuery({
@@ -30,7 +30,7 @@ const FilePage = () => {
         <UploadFiles />
       </div>
       <div className=" grid grid-cols-4 gap-4 items-center w-full ">
-        {data?.map((el: any) => <FolderItem folder={el} />)}
+        {data?.map((el: any) => <FolderItem key={el?.id} folder={el} />)}
       </div>
     </div>
   );
@@ -60,16 +60,11 @@ const UploadFiles = () => {
 };
 
 const FolderItem = ({ folder }: any) => {
-  const folderName = useMemo(() => {
-    return (
-      folder?.metadata?.name || folder?.Key?.replace("/", "").replace("-", " ")
-    );
-  }, [folder]);
   return (
-    <div className="bg-yellow-50 shadow px-2 py-2 w-full  rounded flex items-center justify-between">
+    <div className="bg-yellow-50 hover:bg-muted/50 cursor-pointer  shadow px-2 py-2 w-full  rounded flex items-center justify-between">
       <div className="flex items-center gap-4">
         <Icon.folder className="ml-2" />{" "}
-        <div className="text-sm capitalize">{folderName}</div>
+        <div className="text-sm capitalize">{folder?.name}</div>
       </div>
       <Button variant="ghost" size="icon" data-test="color-mode-toggle">
         <Icon.more size={18} />

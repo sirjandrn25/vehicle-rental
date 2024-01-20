@@ -14,6 +14,9 @@ export const FolderModel = z.object({
   created_at: z.date().nullish(),
 });
 
+export const FolderCreateModel = FolderModel.omit({ id: true, user_id: true });
+export const FolderRenameModel = FolderModel.pick({ name: true });
+
 export interface CompleteFolder extends z.infer<typeof FolderModel> {
   user: CompleteUser;
   parent?: CompleteFolder | null;

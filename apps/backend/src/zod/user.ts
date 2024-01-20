@@ -1,6 +1,6 @@
 import * as z from "zod"
 import { UserRole } from "@prisma/client"
-import { CompleteUserKey, RelatedUserKeyModel, CompleteTeamMembership, RelatedTeamMembershipModel, CompleteUserVerificationToken, RelatedUserVerificationTokenModel, CompleteUserOneTimePassword, RelatedUserOneTimePasswordModel, CompleteFolder, RelatedFolderModel } from "./index"
+import { CompleteUserKey, RelatedUserKeyModel, CompleteTeamMembership, RelatedTeamMembershipModel, CompleteUserVerificationToken, RelatedUserVerificationTokenModel, CompleteUserOneTimePassword, RelatedUserOneTimePasswordModel, CompleteFolder, RelatedFolderModel, CompleteFile, RelatedFileModel } from "./index"
 
 export const UserModel = z.object({
   id: z.string(),
@@ -19,6 +19,7 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
   verification_tokens: CompleteUserVerificationToken[]
   one_time_passwords: CompleteUserOneTimePassword[]
   folders: CompleteFolder[]
+  files: CompleteFile[]
 }
 
 /**
@@ -32,4 +33,5 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserMode
   verification_tokens: RelatedUserVerificationTokenModel.array(),
   one_time_passwords: RelatedUserOneTimePasswordModel.array(),
   folders: RelatedFolderModel.array(),
+  files: RelatedFileModel.array(),
 }))
