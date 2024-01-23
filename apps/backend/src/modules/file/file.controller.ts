@@ -21,6 +21,37 @@ export const FileUploader = asyncErrorHandler(
   }
 );
 
+export const retrieveUserFiles = asyncErrorHandler(
+  async (req: any, res: Response) => {
+    const user = req.user;
+    const response = await dbService.file.findMany({
+      where: {
+        user_id: user?.id,
+      },
+    });
+    res.send(response);
+  }
+);
+export const deleteFileHandler = asyncErrorHandler(
+  async (req: any, res: Response) => {
+    const { id } = req.params;
+    const user = req.user;
+    const file = await dbService.file.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (file?.user_id !== user?.id)
+      return res.status(403).send("You don't have permission");
+    await dbService.file.delete({
+      where: {
+        id,
+      },
+    });
+    res.status(204).send("Successfully deleted");
+  }
+);
+
 export const renameFileHandler = asyncErrorHandler(
   async (req: any, res: Response) => {
     const { id } = req.params;
@@ -55,7 +86,9 @@ export const generateFiles = async (files: any = []) => {
 
 const uploadFileToStorage = async (file: any) => {
   const timeStamp = getTimeStamp();
-  const objectKey = `${file.originalname}-${timeStamp}`.toLowerCase();
+  const objectKey = `${timeStamp}-${file.originalname}`
+    .toLowerCase()
+    .replace(" ", "");
   const params = {
     Bucket: S3_BUCKET_NAME,
     Key: objectKey,

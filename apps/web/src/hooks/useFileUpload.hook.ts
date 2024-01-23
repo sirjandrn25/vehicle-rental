@@ -8,7 +8,13 @@ type UseFileUploadOptionProps = {
   onError?: (error?: any) => void;
 };
 export const useFileUpload = (options?: UseFileUploadOptionProps) => {
-  const onUploadFile = async (files: any) => {
+  const onUploadFile = async ({
+    files,
+    callback,
+  }: {
+    files: any;
+    callback?: () => void;
+  }) => {
     const formData = new FormData();
     for (let file of files) {
       formData.append("files", file);
@@ -25,6 +31,7 @@ export const useFileUpload = (options?: UseFileUploadOptionProps) => {
         url: `${serverBaseUrl}/api/${options?.endPoint || "files"}`,
       });
       options?.onSuccess?.(response);
+      callback?.();
       return response?.data?.files || [];
     } catch (error) {
       options?.onError?.(error);

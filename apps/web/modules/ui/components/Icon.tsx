@@ -49,6 +49,8 @@ import {
   Wand2,
   X,
   File,
+  Pen,
+  DownloadCloud,
 } from "lucide-react";
 
 interface IconProps {
@@ -106,6 +108,8 @@ export const Icon = {
   folder: Folder,
   file: File,
   cross: Cross2Icon,
+  pen: Pen,
+  downloadCloud: DownloadCloud,
 
   // social icons
   google: ({ ...props }: IconProps) => (

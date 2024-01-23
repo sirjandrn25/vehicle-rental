@@ -1,16 +1,17 @@
 import { Router } from "express";
 import { verifyUser } from "../../middleware/auth.middleware";
+import { multipleUpload } from "../../middleware/multer.middleware";
 import schemaValidator from "../../middleware/schema.validator.middleware";
 import { FolderCreateModel, FolderRenameModel } from "../../zod";
 import {
   createFolder,
   deleteFolder,
+  getFolderFiles,
   readFolder,
   readFolders,
   renameFolderHandler,
   uploadFileToFolderHandler,
 } from "./folder.controller";
-import { multipleUpload } from "../../middleware/multer.middleware";
 const router = Router();
 router.get("/:id", verifyUser, readFolder);
 router.get("/", verifyUser, readFolders);
@@ -21,6 +22,7 @@ router.post(
   multipleUpload,
   uploadFileToFolderHandler
 );
+router.get("/:id/files", verifyUser, getFolderFiles);
 router.delete(
   "/:id/rename",
   schemaValidator(FolderRenameModel),

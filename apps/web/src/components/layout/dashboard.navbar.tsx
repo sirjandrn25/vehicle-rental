@@ -8,8 +8,7 @@ import Link from "next/link";
 
 import { UserMenu } from "@components/dashboard/user.menu.component";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { useAuthContext } from "../../context/auth.provider";
+import { useCallback } from "react";
 // import { Banner } from "./Banner";
 
 export function DashboardNavbar() {

@@ -1,4 +1,4 @@
-import { type Response } from "express";
+import { type Response, type Request } from "express";
 import { asyncErrorHandler } from "../../controllers/error.handler.controller";
 import dbService from "../../utils/database.utils";
 import { generateFiles } from "../file/file.controller";
@@ -67,7 +67,7 @@ export const deleteFolder = asyncErrorHandler(
         id,
       },
     });
-    console.log("folder", folder);
+
     if (!folder) return res.status(404).send("not found");
     if (folder.user_id !== user.id)
       return res.status(403).send("You don't have permission.");
@@ -80,6 +80,17 @@ export const deleteFolder = asyncErrorHandler(
   }
 );
 
+export const getFolderFiles = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const files = await dbService.file.findMany({
+      where: {
+        folder_id: id,
+      },
+    });
+    return res.send(files);
+  }
+);
 export const renameFolderHandler = asyncErrorHandler(
   async (req: any, res: Response) => {
     const { id } = req.params;
@@ -136,3 +147,6 @@ export const uploadFileToFolderHandler = asyncErrorHandler(
     return res.send(dbData);
   }
 );
+
+//create handler which can give folders by id
+//create handler which can give folders  paths
