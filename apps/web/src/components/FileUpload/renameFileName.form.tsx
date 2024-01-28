@@ -26,13 +26,10 @@ const RenameFileNameForm = ({ data, callback }: RenameFileNameProps) => {
   });
   const { mutate: onSubmit, isPending } = useMutation({
     onMutate: async (values: any) => {
-      const { success, response } = await ApiService.postRequest(
-        `files/${data?.id}/rename`,
-        {
-          data: values,
-          method: "put",
-        }
-      );
+      const fileService = new ApiService(`files/${data?.id}/rename`);
+      const response = fileService.update({
+        data,
+      });
       if (!success) return setError(response?.message);
       fetchFiles();
       callback(response);

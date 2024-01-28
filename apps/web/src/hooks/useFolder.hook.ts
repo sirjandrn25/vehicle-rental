@@ -2,12 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ApiService } from "core";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
-import { z } from "zod";
 
-const formSchema = z.object({
-  name: z.string().min(3).max(50),
-});
-type FormValues = z.infer<typeof formSchema>;
 export const useFolder = () => {
   const { folder_id } = useParams();
 

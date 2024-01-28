@@ -7,5 +7,6 @@ module.exports = {
   parserOptions: {
     project: true,
   },
+
   ignores: ["**/*.config.js"],
 };
