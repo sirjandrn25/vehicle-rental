@@ -4,7 +4,7 @@ import React from "react";
 
 const PageLoader = () => {
   return (
-    <div className="h-full w-full">
+    <div className="h-screen flex items-center justify-center w-screen">
       <Icon.spinner className="h-10 w-10" />
     </div>
   );

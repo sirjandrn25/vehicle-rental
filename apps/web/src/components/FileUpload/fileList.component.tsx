@@ -2,6 +2,12 @@
 import { useFileContext } from "@context/file.provider";
 import { Button } from "@ui/components/Button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@ui/components/Dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -9,79 +15,102 @@ import {
 } from "@ui/components/DropdownMenu";
 import { Icon } from "@ui/components/Icon";
 import { Zoom } from "@ui/components/zoom-image";
-import { DateUtils } from "core";
+import { DateUtils, DictionaryType } from "core";
 import Link from "next/link";
-import AddEditFolderForm from "./addEditFolderForm";
+import { useState } from "react";
+import RenameFileNameForm from "./renameFileName.form";
 
 const FileList = () => {
   const { uploadedFiles, onDelete } = useFileContext();
+
   return (
     <div className="flex flex-col gap-4">
       <div className=" grid grid-cols-4 gap-4 items-center w-full ">
-        {uploadedFiles?.map((file: any) => (
-          <div
-            key={file?.url}
-            className="flex flex-col  bg-mutated/50 shadow rounded-lg  border"
-          >
-            <div className="px-2 flex items-center justify-between py-3 text-sm">
-              <div>{file?.name}</div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    data-test="color-mode-toggle"
-                  >
-                    <Icon.more size={18} />
-                  </Button>
-                </DropdownMenuTrigger>
+        {uploadedFiles?.map((file: any) => {
+          return <FileListItem file={file} {...{ onDelete }} />;
+        })}
+      </div>
+    </div>
+  );
+};
 
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <AddEditFolderForm onSubmit={async () => {}}>
-                      <div className="flex items-center">
-                        <Icon.pen className="mr-2 h-4 w-4" /> Rename
-                      </div>
-                    </AddEditFolderForm>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <Link
-                      target="_blank"
-                      className="flex items-center "
-                      href={file?.url}
-                    >
-                      <Icon.downloadCloud className="mr-2 h-4 w-4" />{" "}
-                      <span>Download</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-error"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete?.(file?.id);
-                    }}
-                  >
-                    <Icon.delete className="mr-2 h-4 w-4" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            <div className="bg-white mx-4 h-[150px] rounded  items-center flex justify-center ">
-              <FileIcon fileUrl={file.url} />
-            </div>
-            <div className="px-5  py-3 text-sm text-gray-500">
-              {DateUtils.displayDate(file.created_at)}
-            </div>
-          </div>
-        ))}
+const FileListItem = ({
+  file,
+  onDelete,
+}: {
+  file: DictionaryType;
+  onDelete?: (id: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState<boolean>();
+
+  return (
+    <div
+      key={file?.id}
+      className="flex flex-col  bg-mutated/50 shadow rounded-lg  border"
+    >
+      <div className="px-2 flex items-center justify-between py-3 text-sm">
+        <div>{file?.name}</div>
+        <Dialog key={file?.id} open={isOpen} onOpenChange={setIsOpen}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" data-test="color-mode-toggle">
+                <Icon.more size={18} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(true);
+                }}
+              >
+                <Icon.pen className="mr-2 h-4 w-4" /> Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Link
+                  target="_blank"
+                  className="flex items-center "
+                  href={file?.url}
+                >
+                  <Icon.downloadCloud className="mr-2 h-4 w-4" />{" "}
+                  <span>Download</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-error"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(file?.id);
+                }}
+              >
+                <Icon.delete className="mr-2 h-4 w-4" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent key={file?.id}>
+            <DialogHeader>
+              <DialogTitle>Change File Name</DialogTitle>
+            </DialogHeader>
+            <RenameFileNameForm
+              key={file?.id}
+              callback={() => {
+                setIsOpen(false);
+              }}
+              data={file}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
+      <div className="bg-white mx-4 h-[150px] rounded  items-center flex justify-center ">
+        <FileIcon fileUrl={file.url} />
+      </div>
+      <div className="px-5  py-3 text-sm text-gray-500">
+        {DateUtils.displayDate(file.created_at)}
       </div>
     </div>
   );

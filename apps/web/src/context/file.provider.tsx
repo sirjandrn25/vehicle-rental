@@ -18,12 +18,14 @@ interface FileContextProps {
   uploadedFiles?: any;
   isPending: boolean;
   onDelete?: (fileId: string) => void;
+  fetchFiles: () => void;
 }
 export const FileContext = createContext<FileContextProps>({
   isUploading: false,
   startToUpload: () => {},
   setUploadingFiles: () => {},
   isPending: false,
+  fetchFiles: () => {},
 });
 
 const FileProvider = ({ children }: { children: ReactNode }) => {
@@ -73,6 +75,7 @@ const FileProvider = ({ children }: { children: ReactNode }) => {
       uploadedFiles,
       isPending,
       onDelete,
+      fetchFiles: refetch,
     };
   }, [
     isUploading,
@@ -82,6 +85,7 @@ const FileProvider = ({ children }: { children: ReactNode }) => {
     uploadedFiles,
     isPending,
     onDelete,
+    refetch,
   ]);
 
   return <FileContext.Provider value={value}>{children}</FileContext.Provider>;

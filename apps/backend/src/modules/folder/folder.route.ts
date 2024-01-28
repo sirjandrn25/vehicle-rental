@@ -23,7 +23,7 @@ router.post(
   uploadFileToFolderHandler
 );
 router.get("/:id/files", verifyUser, getFolderFiles);
-router.delete(
+router.put(
   "/:id/rename",
   schemaValidator(FolderRenameModel),
   verifyUser,

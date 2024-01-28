@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     refetchInterval: 3 * 1000 * 60,
     enabled: !!localSession?.refresh_token,
   });
-  const { data: user, isFetching: isLoading } = useQuery({
+  const { data: user, isPending: isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const { success, response } = await ApiService.getRequest("auth", true);

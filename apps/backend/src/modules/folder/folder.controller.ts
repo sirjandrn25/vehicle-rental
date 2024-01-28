@@ -41,7 +41,6 @@ export const readFolder = asyncErrorHandler(async (req: any, res: Response) => {
         .send("You don't have permission to access this folder");
     return res.send(folder);
   } catch (error) {
-    console.log("error", error);
     return res.status(500).send(error);
   }
 });
@@ -140,7 +139,6 @@ export const uploadFileToFolderHandler = asyncErrorHandler(
       user_id: user?.id,
       folder_id: id,
     }));
-    console.log("createData", createData);
     const dbData = await dbService.file.createMany({
       data: createData,
     });
@@ -150,3 +148,26 @@ export const uploadFileToFolderHandler = asyncErrorHandler(
 
 //create handler which can give folders by id
 //create handler which can give folders  paths
+export const getFullDirectoryPathHandler = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const directoryPaths = [];
+    const currentFolder = await dbService.folder.findUnique({
+      where: { id },
+    });
+    if (!currentFolder) return res.status(404).send("Not found");
+    directoryPaths.push(currentFolder);
+    const findParentPath = async (folder: any) => {
+      const parent_id = folder.parent_id;
+      if (!parent_id) return;
+      const parentFolder = await dbService.folder.findUnique({
+        where: {
+          id: parent_id,
+        },
+      });
+      directoryPaths.push(parentFolder);
+
+      findParentPath(parentFolder);
+    };
+  }
+);

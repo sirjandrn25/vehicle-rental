@@ -1,22 +1,23 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ApiService } from "core";
+import { ApiService, DictionaryType } from "core";
 import { useParams } from "next/navigation";
-import { ReactNode, createContext, useMemo } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 
+export type ResponseReturnType = Promise<{
+  success: boolean;
+  response: DictionaryType;
+}>;
 interface FolderContext {
   folders?: any;
   onDelete: (folderId: string) => void;
-  onEdit: ({ name, id }: { name: string; id: string }) => void;
-  onCreate: ({ name }: { name: string }) => void;
+  fetchList: () => void;
   isDeletePending?: boolean;
-  isEditPending?: boolean;
   isFetchPending?: boolean;
 }
 const FolderContext = createContext<FolderContext>({
   folders: [],
   onDelete: () => {},
-  onEdit: () => {},
-  onCreate: () => {},
+  fetchList: () => {},
 });
 
 const FolderProvider = ({ children }: { children: ReactNode }) => {
@@ -24,7 +25,7 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
 
   const {
     data = [],
-    refetch: fetchListing,
+    refetch: refetch,
     isPending: isFetchPending,
   } = useQuery({
     queryKey: ["folders"],
@@ -47,8 +48,8 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
     },
     enabled: !!folder_id,
   });
-  const refetchListing = () => {
-    fetchListing();
+  const fetchList = () => {
+    if (!folder_id) return refetch();
     fetchFolderDetail();
   };
   const { mutate: onDelete, isPending: isDeletePending } = useMutation({
@@ -56,60 +57,31 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
       const { success } = await ApiService.postRequest(`/folders/${id}`, {
         method: "delete",
       });
-      if (success) refetchListing();
-    },
-  });
-  const { mutate: onEdit, isPending: isEditPending } = useMutation({
-    mutationFn: async ({ id, name }: { id: string; name: string }) => {
-      const { success } = await ApiService.postRequest(
-        `/folders/${id}/rename`,
-        {
-          method: "post",
-          data: { name },
-        }
-      );
-      if (success) refetchListing();
+      if (success) fetchList();
     },
   });
 
-  const { mutate: onCreate, isPending: isCreatePending } = useMutation({
-    onMutate: async (data: any) => {
-      const { success } = await ApiService.postRequest("/folders", {
-        data,
-      });
-      if (success) refetchListing();
-    },
-  });
   const folders = useMemo(() => {
     if (folder_id) return folderDetail?.childrens;
     return data;
   }, [folder_id, data, folderDetail]);
   const value = useMemo(
     () => ({
-      isEditPending,
       isDeletePending,
       folders,
       folderDetail,
-      fetchListing,
-      onEdit,
+      fetchList,
       onDelete,
-      onCreate,
-      isCreatePending,
       folder_id,
       isFetchPending,
     }),
     [
       {
-        isEditPending,
         isDeletePending,
         folders,
         folderDetail,
-
-        fetchListing,
-        onEdit,
+        fetchList,
         onDelete,
-        onCreate,
-        isCreatePending,
         folder_id,
         isFetchPending,
       },
@@ -120,4 +92,5 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+export const useFolderContext = () => useContext(FolderContext);
 export default FolderProvider;

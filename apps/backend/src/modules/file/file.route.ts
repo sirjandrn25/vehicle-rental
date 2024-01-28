@@ -14,8 +14,8 @@ const router = Router();
 router.post("/", verifyUser, multipleUpload, FileUploader);
 router.get("/", verifyUser, retrieveUserFiles);
 router.delete("/:id", verifyUser, deleteFileHandler);
-router.post(
-  "/:id",
+router.put(
+  "/:id/rename",
   schemaValidator(FileModelRename),
   verifyUser,
   renameFileHandler

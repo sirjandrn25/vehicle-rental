@@ -1,32 +1,25 @@
-"use client";
 import { InputFormField } from "@components/FormElements/input.form.field";
-import { useFolderContext } from "@context/folder.provider";
+import { useFileContext } from "@context/file.provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@ui/components/Button";
 import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
 import { ApiService, DictionaryType } from "core";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+type RenameFileNameProps = {
+  data: DictionaryType;
+  callback: (response: DictionaryType) => void;
+};
 
 const formSchema = z.object({
   name: z.string().min(3).max(50),
 });
-
-type FormValues = z.infer<typeof formSchema>;
-
-interface AddEditFolderFormProps {
-  callback: (response: DictionaryType) => void;
-  data?: DictionaryType;
-}
-const AddEditFolderForm = ({ callback, data = {} }: AddEditFolderFormProps) => {
+const RenameFileNameForm = ({ data, callback }: RenameFileNameProps) => {
   const [error, setError] = useState<any>("");
-  const { fetchList } = useFolderContext();
-  const isEdit = data?.id;
-  const { folder_id } = useParams();
+  const { fetchFiles } = useFileContext();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: data,
@@ -34,21 +27,17 @@ const AddEditFolderForm = ({ callback, data = {} }: AddEditFolderFormProps) => {
   const { mutate: onSubmit, isPending } = useMutation({
     onMutate: async (values: any) => {
       const { success, response } = await ApiService.postRequest(
-        isEdit ? `/folders/${data?.id}/rename` : "/folders",
+        `files/${data?.id}/rename`,
         {
-          data: {
-            ...values,
-            parent_id: folder_id,
-          },
-          method: isEdit ? "put" : "post",
+          data: values,
+          method: "put",
         }
       );
       if (!success) return setError(response?.message);
-      fetchList();
+      fetchFiles();
       callback(response);
     },
   });
-
   return (
     <Form {...form}>
       <form
@@ -59,13 +48,12 @@ const AddEditFolderForm = ({ callback, data = {} }: AddEditFolderFormProps) => {
         {error && <div className="text-sm text-error">{error}</div>}
         <InputFormField
           name="name"
-          label="Folder Name"
+          label="File Name"
           control={form?.control}
           required
         />
         <Button disabled={isPending}>
           <div>
-            {" "}
             {isPending && (
               <Icon.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
@@ -77,37 +65,4 @@ const AddEditFolderForm = ({ callback, data = {} }: AddEditFolderFormProps) => {
   );
 };
 
-// export const AddEditFolderFormDialog = forwardRef(
-//   (
-//     {
-//       children,
-//       onSubmit,
-//     }: {
-//       children: any;
-//       onSubmit: (data: FormValues) => Promise<void>;
-//     },
-//     ref: any
-//   ) => {
-//     const [error, setError] = useState<any>("");
-//     const modalRef = useRef<any>();
-//     useImperativeHandle(
-//       ref,
-//       () => {
-//         return {
-//           handleOpen: () => modalRef?.current?.handleOpen(),
-//         };
-//       },
-//       [ref]
-//     );
-
-//     return (
-//       <ModalDialog
-//         ref={modalRef}
-//         displayLabel={children}
-//         title={"Create New Folder"}
-//       ></ModalDialog>
-//     );
-//   }
-// );
-
-export default AddEditFolderForm;
+export default RenameFileNameForm;

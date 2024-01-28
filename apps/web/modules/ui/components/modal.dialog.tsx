@@ -27,7 +27,14 @@ const ModalDialog = forwardRef(
   ) => {
     const [open, setOpen] = useState(false);
 
-    useImperativeHandle(ref, () => ({ handleClose: () => setOpen(false) }), []);
+    useImperativeHandle(
+      ref,
+      () => ({
+        handleClose: () => setOpen(false),
+        handleOpen: () => setOpen(true),
+      }),
+      []
+    );
 
     return (
       <Dialog open={open} onOpenChange={setOpen}>
