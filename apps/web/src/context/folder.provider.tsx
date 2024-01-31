@@ -25,51 +25,30 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
 
   const {
     data = [],
-    refetch: refetch,
+    refetch: fetchList,
     isPending: isFetchPending,
   } = useQuery({
     queryKey: ["folders"],
     queryFn: async () => {
-      const { success, response } = await ApiService.getRequest("/folders");
-      if (success) return response;
-      return [];
+      const service = new ApiService(`/folders?parent_id=${folder_id}`);
+      const response = await service.getAll();
+      return response?.data;
     },
     enabled: !folder_id,
   });
 
-  const { data: folderDetail, refetch: fetchFolderDetail } = useQuery({
-    queryKey: ["folders", folder_id],
-    queryFn: async () => {
-      const { success, response } = await ApiService.getRequest(
-        `/folders/${folder_id}`
-      );
-      if (success) return response;
-      return {};
-    },
-    enabled: !!folder_id,
-  });
-  const fetchList = () => {
-    if (!folder_id) return refetch();
-    fetchFolderDetail();
-  };
   const { mutate: onDelete, isPending: isDeletePending } = useMutation({
     mutationFn: async (id: string) => {
-      const { success } = await ApiService.postRequest(`/folders/${id}`, {
-        method: "delete",
-      });
-      if (success) fetchList();
+      const service = new ApiService(`/folders`);
+      await service.delete(id);
+      fetchList();
     },
   });
 
-  const folders = useMemo(() => {
-    if (folder_id) return folderDetail?.childrens;
-    return data;
-  }, [folder_id, data, folderDetail]);
   const value = useMemo(
     () => ({
       isDeletePending,
-      folders,
-      folderDetail,
+      folders: data,
       fetchList,
       onDelete,
       folder_id,
@@ -78,8 +57,7 @@ const FolderProvider = ({ children }: { children: ReactNode }) => {
     [
       {
         isDeletePending,
-        folders,
-        folderDetail,
+        data,
         fetchList,
         onDelete,
         folder_id,

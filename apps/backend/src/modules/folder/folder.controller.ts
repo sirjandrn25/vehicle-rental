@@ -1,4 +1,4 @@
-import { type Response, type Request } from "express";
+import { type Request, type Response } from "express";
 import { asyncErrorHandler } from "../../controllers/error.handler.controller";
 import dbService from "../../utils/database.utils";
 import { generateFiles } from "../file/file.controller";
@@ -48,6 +48,16 @@ export const readFolder = asyncErrorHandler(async (req: any, res: Response) => {
 export const readFolders = asyncErrorHandler(
   async (req: any, res: Response) => {
     const user = req.user;
+
+    const { parent_id } = req.query || {};
+    if (parent_id) {
+      const folders = await dbService.folder.findMany({
+        where: {
+          parent_id,
+        },
+      });
+      return res.send(folders);
+    }
     const folders = await dbService.folder.findMany({
       where: {
         user_id: user?.id,

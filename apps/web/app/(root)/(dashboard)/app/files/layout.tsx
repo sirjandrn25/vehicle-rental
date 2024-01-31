@@ -5,12 +5,10 @@ import FileProvider, {
   withFileProviderExport,
 } from "@context/file.provider";
 import FolderProvider from "@context/folder.provider";
-import { useFolder } from "@hooks/useFolder.hook";
 import { FileDialog } from "@ui/components/file-dialog";
 import { ReactNode } from "react";
 
 const FileLayout = ({ children }: { children: ReactNode }) => {
-  const { onCreate, folder_id } = useFolder();
   const { uploadingFiles, setUploadingFiles, isUploading, startToUpload } =
     useFileContext();
 

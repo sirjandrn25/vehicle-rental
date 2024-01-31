@@ -1,11 +1,11 @@
 import { InputFormField } from "@components/FormElements/input.form.field";
 import { useFileContext } from "@context/file.provider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import useCustomMutation from "@hooks/useCustomMutation.hook";
 import { Button } from "@ui/components/Button";
 import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
-import { ApiService, DictionaryType } from "core";
+import { DictionaryType } from "core";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,17 +24,15 @@ const RenameFileNameForm = ({ data, callback }: RenameFileNameProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: data,
   });
-  const { mutate: onSubmit, isPending } = useMutation({
-    onMutate: async (values: any) => {
-      const fileService = new ApiService(`files/${data?.id}/rename`);
-      const response = fileService.update({
-        data,
-      });
-      if (!success) return setError(response?.message);
+  const { onSubmit, isPending } = useCustomMutation({
+    endPoint: `files/${data?.id}/rename`,
+    schema: formSchema,
+    onSuccess: (data) => {
       fetchFiles();
-      callback(response);
+      callback(data as any);
     },
   });
+
   return (
     <Form {...form}>
       <form

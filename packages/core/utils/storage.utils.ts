@@ -19,16 +19,9 @@ export default class LocalStorageUtils {
   }
 }
 
-export type UserType = {
-  id: string;
-  name: string;
-  email: string;
-  role: "USER" | "ADMIN";
-  email_verified: boolean;
-};
 export const authSession = "auth_session";
 export type UserSessionType = {
-  user: UserType;
+  user: DictionaryType;
   access_token: string;
   refresh_token: string;
 };

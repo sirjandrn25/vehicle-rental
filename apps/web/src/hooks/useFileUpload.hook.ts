@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { DictionaryType, getAuthorizationHeader, serverBaseUrl } from "core";
+import { useState } from "react";
 
 type UseFileUploadOptionProps = {
   endPoint?: string;
@@ -8,6 +8,7 @@ type UseFileUploadOptionProps = {
   onError?: (error?: any) => void;
 };
 export const useFileUpload = (options?: UseFileUploadOptionProps) => {
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const onUploadFile = async ({
     files,
     callback,
@@ -15,6 +16,7 @@ export const useFileUpload = (options?: UseFileUploadOptionProps) => {
     files: any;
     callback?: () => void;
   }) => {
+    setIsUploading(true);
     const formData = new FormData();
     for (let file of files) {
       formData.append("files", file);
@@ -32,18 +34,17 @@ export const useFileUpload = (options?: UseFileUploadOptionProps) => {
       });
       options?.onSuccess?.(response);
       callback?.();
+      setIsUploading(false);
       return response?.data?.files || [];
     } catch (error) {
       options?.onError?.(error);
+      setIsUploading(true);
       return [];
     }
   };
-  const { mutate: startToUpload, isPending: isUploading } = useMutation({
-    mutationFn: onUploadFile,
-  });
 
   return {
-    startToUpload,
+    startToUpload: onUploadFile,
     isUploading,
   };
 };

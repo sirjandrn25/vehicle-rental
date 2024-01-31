@@ -1,37 +1,53 @@
+import { useMutation } from "@tanstack/react-query";
 import { APIResponse, ApiService } from "core";
-import { useState } from "react";
-import { ZodAny, z } from "zod";
+import { ZodTypeAny, z } from "zod";
 
-interface UseCustomMutationProps {
+interface UseCustomMutationProps<TData> {
   endPoint: string;
-  schema: ZodAny;
-  method: "create" | "update";
+  schema: ZodTypeAny;
+  method?: "create" | "update";
+  onSuccess?: (data: TData) => void;
 }
 
-interface UseCustomMutationPropsReturnType<TData, bodyType> {
+interface UseCustomMutationPropsReturnType<TBody, TData> {
   isPending?: boolean;
-  onSubmit: (data: bodyType) => Promise<APIResponse<TData>>;
+  onSubmit: (data: TBody) => void;
+  isError?: boolean;
+  asyncOnSubmit: (data: TBody) => Promise<APIResponse<TData>>;
+  error?: Error | null;
 }
 const useCustomMutation = <TData>({
   endPoint,
   schema,
   method,
-}: UseCustomMutationProps): UseCustomMutationPropsReturnType<
-  TData,
-  z.infer<typeof schema>
+  onSuccess,
+}: UseCustomMutationProps<TData>): UseCustomMutationPropsReturnType<
+  z.infer<typeof schema>,
+  TData
 > => {
-  const [isPending, setIsPending] = useState<boolean>(false);
-
-  const onSubmit = async (data: z.infer<typeof schema>) => {
-    const service = new ApiService<TData>(endPoint)[method || "create"];
-    setIsPending(true);
-    const response = await service(data);
-    setIsPending(false);
-    return response;
-  };
-  return {
+  const {
+    mutate: onSubmit,
     isPending,
+    error,
+    isError,
+    mutateAsync: asyncOnSubmit,
+  } = useMutation({
+    mutationFn: async (data: z.infer<typeof schema>) => {
+      const serviceMethod = new ApiService<TData>(endPoint)[method || "create"];
+      return await serviceMethod(data);
+    },
+    onSuccess(data: APIResponse<TData>) {
+      onSuccess?.(data.data as TData);
+    },
+  });
+  return {
     onSubmit,
+    isPending,
+    isError,
+    asyncOnSubmit,
+    error,
+    // isPending,
+    // onSubmit,
   };
 };
 

@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { ApiService, UserSessionType, UserType, authSession } from "core";
+import { ApiService } from "core";
 import { useRouter } from "next/navigation";
 
 import {
@@ -12,17 +12,40 @@ import {
   useState,
 } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import { z } from "zod";
 
+enum UserRole {
+  USER,
+  ADMIN,
+}
+export const UserModel = z.object({
+  id: z.string(),
+  email: z.string(),
+  email_verified: z.boolean(),
+  role: z.nativeEnum(UserRole),
+  name: z.string().nullish(),
+  avatar_url: z.string().nullish(),
+  github_username: z.string().nullish(),
+  password: z.string().nullish(),
+});
+export type UserModelType = z.infer<typeof UserModel>;
+export const authSession = "auth_session";
+export type UserSessionType = {
+  user: UserModelType;
+  access_token: string;
+  refresh_token: string;
+};
 type AuthContextType = {
-  user?: UserType;
+  user?: UserModelType;
   isLoggedIn: boolean;
   isLoading: boolean;
-  handleLogin?: (data: UserSessionType) => void;
+  handleLogin: (data: UserSessionType) => void;
   handleLogout?: () => void;
 };
 export const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   isLoading: false,
+  handleLogin: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -33,15 +56,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useQuery({
     queryKey: ["refreshToken"],
     queryFn: async () => {
-      const { success, response } = await ApiService.postRequest(
-        "auth/refresh-token",
-        {
-          data: {
-            token: session?.refresh_token,
-          },
-        }
-      );
-      if (success) handleLogin(response);
+      const service = new ApiService("auth/refresh-token");
+      const response = await service.create({
+        token: session?.refresh_token,
+      });
+
+      if (!response?.errorMessage) handleLogin(response?.data as any);
       else handleLogout();
       return {};
     },
@@ -51,14 +71,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: user, isPending: isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const { success, response } = await ApiService.getRequest("auth", true);
-      if (success) return response;
-      return {};
+      try {
+        const service = new ApiService("auth");
+        const response = await service.getOne();
+        return response.data as any;
+      } catch (error) {
+        return {};
+      }
     },
     enabled: !!localSession?.access_token,
   });
-
-  // AuthStorageUtils.getRefreshToken()
 
   const handleLogin = useCallback((data: UserSessionType) => {
     setSession(data);

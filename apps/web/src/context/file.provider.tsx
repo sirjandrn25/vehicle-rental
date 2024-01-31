@@ -37,11 +37,15 @@ const FileProvider = ({ children }: { children: ReactNode }) => {
   } = useQuery({
     queryKey: ["files", folder_id],
     queryFn: async () => {
-      const { success, response } = await ApiService.getRequest(
-        folder_id ? `/folders/${folder_id}/files` : "/files"
-      );
-      if (success) return response;
-      return [];
+      try {
+        const service = new ApiService(
+          folder_id ? `/folders/${folder_id}/files` : "/files"
+        );
+        const response = await service.getAll();
+        return response.data;
+      } catch (error) {
+        return [];
+      }
     },
   });
   const [uploadingFiles, setUploadingFiles] =
@@ -56,13 +60,9 @@ const FileProvider = ({ children }: { children: ReactNode }) => {
 
   const { mutate: onDelete } = useMutation({
     mutationFn: async (id: string) => {
-      const { success, response } = await ApiService.postRequest(
-        `/files/${id}`,
-        {
-          method: "delete",
-        }
-      );
-      if (success) refetch();
+      const service = new ApiService(`/files`);
+      await service.delete(id);
+      refetch();
     },
   });
 

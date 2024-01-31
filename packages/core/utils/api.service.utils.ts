@@ -35,8 +35,8 @@ export class ApiService<TData> {
       : undefined;
   }
 
-  async getOne(id: string): Promise<APIResponse<TData>> {
-    return await axios.get(`${this.endPoint}/${id}`, this.headers);
+  async getOne(): Promise<APIResponse<TData>> {
+    return await axios.get(`${this.endPoint}`, this.headers);
   }
   async getAll(): Promise<APIResponse<TData[]>> {
     return await axios.get(this.endPoint, this.headers);

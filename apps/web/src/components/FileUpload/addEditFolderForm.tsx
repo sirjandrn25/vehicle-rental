@@ -2,11 +2,11 @@
 import { InputFormField } from "@components/FormElements/input.form.field";
 import { useFolderContext } from "@context/folder.provider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import useCustomMutation from "@hooks/useCustomMutation.hook";
 import { Button } from "@ui/components/Button";
 import { Form } from "@ui/components/Form";
 import { Icon } from "@ui/components/Icon";
-import { ApiService, DictionaryType } from "core";
+import { DictionaryType } from "core";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -31,21 +31,13 @@ const AddEditFolderForm = ({ callback, data = {} }: AddEditFolderFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: data,
   });
-  const { mutate: onSubmit, isPending } = useMutation({
-    onMutate: async (values: any) => {
-      const { success, response } = await ApiService.postRequest(
-        isEdit ? `/folders/${data?.id}/rename` : "/folders",
-        {
-          data: {
-            ...values,
-            parent_id: folder_id,
-          },
-          method: isEdit ? "put" : "post",
-        }
-      );
-      if (!success) return setError(response?.message);
+  const { onSubmit, isPending } = useCustomMutation({
+    endPoint: isEdit ? `/folders/${data?.id}/rename` : "/folders",
+    schema: formSchema,
+    method: isEdit ? "update" : "create",
+    onSuccess: (data) => {
       fetchList();
-      callback(response);
+      callback(data as any);
     },
   });
 

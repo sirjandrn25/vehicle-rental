@@ -32,7 +32,7 @@ export const RefreshTokenSchema = z.object({
   token: z.string(),
 });
 
-export const authApiParams = {
+export const authEndPointConstant = {
   register: {
     endPoint: "/auth/register",
     schema: RegisterSchema,
@@ -47,11 +47,7 @@ export const authApiParams = {
   },
 };
 export const fileApiParams = {};
-export const ApiEndPointSupport = {
-  auth: authApiParams,
-  file: {
-    create: {
-      endPoint: `/files`,
-    },
-  },
+const ApiEndPointConstant = {
+  auth: authEndPointConstant,
 };
+export default ApiEndPointConstant;

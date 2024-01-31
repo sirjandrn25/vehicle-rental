@@ -1,5 +1,5 @@
 "use client";
-import { useFolder } from "@hooks/useFolder.hook";
+import { useFolderContext } from "@context/folder.provider";
 import { Button } from "@ui/components/Button";
 import {
   Dialog,
@@ -18,11 +18,11 @@ import Link from "next/link";
 import { useState } from "react";
 import AddEditFolderForm from "./addEditFolderForm";
 const FolderList = () => {
-  const { folders, onDelete, onEdit } = useFolder();
+  const { folders, onDelete } = useFolderContext();
   return (
     <div className=" grid grid-cols-4 gap-4 items-center w-full ">
       {folders?.map((el: any) => (
-        <FolderItem {...{ onDelete, onEdit }} key={el?.id} folder={el} />
+        <FolderItem {...{ onDelete }} key={el?.id} folder={el} />
       ))}
     </div>
   );
