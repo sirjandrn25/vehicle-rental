@@ -79,3 +79,18 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
 - [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
 - [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+
+
+# Authentication
+- Register Controller
+- Login Controller By JWT
+- Refresh Token Controller
+- Logged User Controller
+- authorization handle by verifyUser middleware
+
+
+# Validation And Error Handler
+- Validation Using Zod Schema
+- make asyncErrorHandler
+- parse Error to two format Database Error, Schema Validation error
+- make type safe
