@@ -5,7 +5,7 @@ import { ZodTypeAny, z } from "zod";
 interface UseCustomMutationProps<TData> {
   endPoint: string;
   schema: ZodTypeAny;
-  method?: "create" | "update";
+  method?: "post" | "put";
   onSuccess?: (data: TData) => void;
 }
 
@@ -14,7 +14,7 @@ interface UseCustomMutationPropsReturnType<TBody, TData> {
   onSubmit: (data: TBody) => void;
   isError?: boolean;
   asyncOnSubmit: (data: TBody) => Promise<APIResponse<TData>>;
-  error?: Error | null;
+  error?: any;
 }
 const useCustomMutation = <TData>({
   endPoint,
@@ -33,13 +33,14 @@ const useCustomMutation = <TData>({
     mutateAsync: asyncOnSubmit,
   } = useMutation({
     mutationFn: async (data: z.infer<typeof schema>) => {
-      const serviceMethod = new ApiService<TData>(endPoint)[method || "create"];
-      return await serviceMethod(data);
+      const service = new ApiService<TData>(endPoint);
+      return await service.post(data);
     },
     onSuccess(data: APIResponse<TData>) {
       onSuccess?.(data.data as TData);
     },
   });
+
   return {
     onSubmit,
     isPending,

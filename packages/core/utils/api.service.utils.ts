@@ -10,8 +10,8 @@ export const getAccessToken = (type = "Bearer") => {
 export const getAuthorizationHeader = () => {
   return { Authorization: getAccessToken() };
 };
-const PRODUCTION_URL = "https://dv-mart-web.vercel.app";
-const DEVELOPMENT_URL = "http://localhost:8000";
+const PRODUCTION_URL = "https://dv-mart-web.vercel.app/api";
+const DEVELOPMENT_URL = "http://localhost:8000/api";
 export const api_request_methods = ["get", "post", "put", "patch", "delete"];
 export const serverBaseUrl =
   process.env.NODE_ENV !== "production" ? DEVELOPMENT_URL : PRODUCTION_URL;
@@ -23,35 +23,57 @@ export interface APIResponse<T> {
 }
 
 export class ApiService<TData> {
-  private endPoint: string;
+  protected endPoint: string;
   private headers: any = {
-    "Content-Type": "application/json",
+    "content-type": "application/json",
   };
 
   constructor(entitySlug: string, config?: { isLoggedIn?: boolean }) {
     this.endPoint = `${serverBaseUrl}/${entitySlug}`;
-    this.headers.Authorization = config?.isLoggedIn
-      ? getAccessToken()
-      : undefined;
+
+    this.headers.Authorization =
+      config?.isLoggedIn !== false ? getAccessToken() : undefined;
   }
 
   async getOne(): Promise<APIResponse<TData>> {
-    return await axios.get(`${this.endPoint}`, this.headers);
+    return await axios({
+      url: this.endPoint,
+      headers: this.headers,
+      method: "get",
+    });
   }
   async getAll(): Promise<APIResponse<TData[]>> {
-    return await axios.get(this.endPoint, this.headers);
+    return await axios({
+      url: this.endPoint,
+      headers: this.headers,
+      method: "get",
+    });
   }
-  async create(
+  async post(
     data: Omit<TData, "id" | "created_at" | "updated_at">
   ): Promise<APIResponse<TData>> {
-    return await axios.post(this.endPoint, data, this.headers);
+    return await axios({
+      url: this.endPoint,
+      headers: this.headers,
+      data,
+      method: "post",
+    });
   }
-  async update(
+  async put(
     data: Omit<TData, "id" | "created_at" | "updated_at">
   ): Promise<APIResponse<TData>> {
-    return await axios.put(this.endPoint, data, this.headers);
+    return await axios({
+      url: this.endPoint,
+      headers: this.headers,
+      data,
+      method: "put",
+    });
   }
   async delete(id: string): Promise<void> {
-    return await axios.delete(`${this.endPoint}/${id}`, this.headers);
+    return await axios({
+      url: `${this.endPoint}/${id}`,
+      method: "delete",
+      headers: this.headers,
+    });
   }
 }

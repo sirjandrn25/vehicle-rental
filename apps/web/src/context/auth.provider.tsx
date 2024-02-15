@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryKey: ["refreshToken"],
     queryFn: async () => {
       const service = new ApiService("auth/refresh-token");
-      const response = await service.create({
+      const response = await service.post({
         token: session?.refresh_token,
       });
 

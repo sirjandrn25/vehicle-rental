@@ -34,15 +34,15 @@ export const RefreshTokenSchema = z.object({
 
 export const authEndPointConstant = {
   register: {
-    endPoint: "/auth/register",
+    endPoint: "auth/register",
     schema: RegisterSchema,
   },
   login: {
-    endPoint: `/auth/login`,
+    endPoint: `auth/login`,
     schema: LoginSchema,
   },
   refreshToken: {
-    endPoint: `/auth/refresh-token`,
+    endPoint: `auth/refresh-token`,
     schema: RefreshTokenSchema,
   },
 };
