@@ -57,12 +57,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryKey: ["refreshToken"],
     queryFn: async () => {
       const service = new ApiService("auth/refresh-token");
-      const response = await service.post({
-        token: session?.refresh_token,
-      });
+      try {
+        const response = await service.post({
+          token: session?.refresh_token,
+        });
+        handleLogin(response?.data as any);
+      } catch (error) {
+        handleLogout();
+        console.log(error);
+      }
 
-      if (!response?.errorMessage) handleLogin(response?.data as any);
-      else handleLogout();
       return {};
     },
     refetchInterval: 3 * 1000 * 60,
