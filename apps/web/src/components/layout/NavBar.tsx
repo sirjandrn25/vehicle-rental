@@ -45,13 +45,13 @@ export function NavBar() {
 
   return (
     <nav
-      className={`bg-background/80 fixed left-0 top-0 z-20 w-full backdrop-blur-lg`}
+      className={`bg-background/80 sticky left-0 right-0 top-0 z-20 w-full backdrop-blur-lg`}
       data-test="navigation"
     >
       {/* <Banner /> */}
 
-      <div className="container">
-        <div className="flex items-center gap-6 py-8 justify-stretch">
+      <div className="container py-5">
+        <div className="flex items-center gap-6 py-2 justify-stretch">
           <div className="flex justify-start flex-1">
             <Link
               href="/"
